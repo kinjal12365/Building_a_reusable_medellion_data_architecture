@@ -1,0 +1,32 @@
+jobs:
+
+  - job_id: customers_raw
+    dataset: customers
+    source:
+      uri: "abfss://landing@medelliondataarcs.dfs.core.windows.net/customers/"
+      format: null
+      pattern: "*.csv"
+    bronze:
+      table_name: bronze_customers
+      location: "abfss://bronze@medelliondataarcs.dfs.core.windows.net/customers/"
+    options:
+      csv:
+        header: true
+        delimiter: ","
+        encoding: "utf-8"
+        multiline: false
+      json:
+        multiline: false
+
+  - job_id: orders_raw
+    dataset: orders
+    source:
+      uri: "abfss://landing@medelliondataarcs.dfs.core.windows.net/orders/"
+      format: null
+      pattern: "*"
+    bronze:
+      table_name: bronze_orders
+      location: "abfss://bronze@medelliondataarcs.dfs.core.windows.net/orders/"
+    options:
+      json:
+        multiline: true
