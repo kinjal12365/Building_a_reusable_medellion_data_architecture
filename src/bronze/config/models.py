@@ -90,8 +90,10 @@ class BronzeConfig(BaseModel):
 
 class FormatOptions(BaseModel):
     csv: CsvOptions = Field(default_factory=CsvOptions)
-    json: JsonOptions = Field(default_factory=JsonOptions)
+    json_opts: JsonOptions = Field(default_factory=JsonOptions, alias="json")
     parquet: ParquetOptions = Field(default_factory=ParquetOptions)
+
+    model_config = {"populate_by_name": True}
 
 
 # ---------------------------------------------------------------------------
