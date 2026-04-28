@@ -27,33 +27,14 @@ def attach_metadata(
     source_file_name: str,
     source_file_hash: str,
 ) -> DataFrame:
-    """
-    Attach 8 Bronze metadata columns to a DataFrame.
-
-    Args:
-        df:                 Any Spark DataFrame (all columns already STRING)
-        batch_id:           Batch ID for this pipeline run
-        run_id:             Unique run ID for this execution
-        source_file_name:   Filename of the source file
-        source_file_hash:   SHA-256 hex digest of the source file
-
-    Returns:
-        DataFrame with 8 additional metadata columns.
-    """
-
     return (
         df
-        # Static values — same for every row in this file
         .withColumn("_batch_id",             F.lit(batch_id))
         .withColumn("_run_id",               F.lit(run_id))
         .withColumn("_source_file_name",     F.lit(source_file_name))
         .withColumn("_source_file_hash",     F.lit(source_file_hash))
-
-        # Timestamps — same for every row in this file
         .withColumn("_ingestion_timestamp",  F.current_timestamp())
         .withColumn("_ingestion_date",       F.current_date())
-
-        # Row-level — unique per row
         .withColumn("_record_seq",           F.monotonically_increasing_id())
         .withColumn("_source_row_uuid",      F.expr("uuid()"))
     )
