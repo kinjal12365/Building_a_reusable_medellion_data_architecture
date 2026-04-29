@@ -1,0 +1,122 @@
+===============================================================
+BRONZE PIPELINE — SESSION RESUME PROMPT (UPDATED)
+===============================================================
+Paste this at the start of a new chat to continue exactly where we left off.
+===============================================================
+
+I'm building a Bronze layer PySpark ingestion pipeline on Azure Databricks
+with ADLS Gen2 storage. Here's where I am:
+
+---------------------------------------------------------------
+TECH STACK
+---------------------------------------------------------------
+- Python 3.14
+- Pydantic v2
+- PySpark on Azure Databricks
+- ADLS Gen2 storage account: medelliondataarcs
+- YAML-driven config (no hardcoded values)
+- GitHub repo: kinjal12365/Building_a_reusable_medellion_data_architecture
+
+---------------------------------------------------------------
+NON-NEGOTIABLE RULES
+---------------------------------------------------------------
+1. Bronze never fails on data content — only infra/file errors fail the job
+2. Every source column cast to STRING in Bronze — no type inference
+3. Malformed rows go to bronze_corrupt table — never silently dropped
+4. Zero hardcoded paths, formats, or dataset names — everything from YAML
+5. Storage is pluggable via URI scheme (abfss://, s3a://, gs://, local)
+6. Every Bronze row gets these 8 metadata columns:
+   _batch_id, _run_id, _source_file_name, _source_file_hash,
+   _ingestion_timestamp, _ingestion_date, _record_seq, _source_row_uuid
+7. Bronze tables partitioned by _ingestion_date
+8. File watermark prevents reprocessing — keyed on content hash not filename
+
+---------------------------------------------------------------
+REPO STRUCTURE
+---------------------------------------------------------------
+bronze-pipeline/
+├── CLAUDE.md
+├── RESUME_SESSION.txt
+├── configs/
+│   └── example.yaml
+├── docs/
+│   └── ARCHITECTURE.md
+├── src/bronze/
+│   ├── config/
+│   │   ├── __init__.py
+│   │   ├── config_store.py        (abstract ConfigStore interface)
+│   │   ├── yaml_store.py          (YamlConfigStore — reads YAML)
+│   │   └── models.py              (Pydantic v2 models)
+│   ├── discovery/
+│   │   ├── __init__.py
+│   │   ├── file_lister.py         (list files, compute SHA-256 hash)
+│   │   └── format_detector.py     (extension → magic bytes → config override)
+│   ├── readers/
+│   │   ├── __init__.py
+│   │   ├── adls_reader.py         (NOT YET BUILT)
+│   │   ├── s3_reader.py           (NOT YET BUILT)
+│   │   └── gcs_reader.py          (NOT YET BUILT)
+│   ├── loader.py                  (NOT YET BUILT)
+│   ├── watermark.py               (NOT YET BUILT)
+│   └── metadata.py                (attach_metadata, generate_run_id, generate_batch_id)
+├── tests/
+│   ├── fixtures/                  (sample1.csv, sample2.json, sample3.csv)
+│   └── test_format_detector.py
+└── scripts/
+    └── run.py                     (NOT YET BUILT)
+
+---------------------------------------------------------------
+BUILD STEPS STATUS
+---------------------------------------------------------------
+Step 1 — Config layer                    DONE ✅
+Step 2 — Format detector                 DONE ✅
+Step 3 — File discovery + hashing        DONE ✅
+Step 4 — Metadata column builder         DONE ✅
+Step 5 — Readers (CSV, JSON, Parquet)    NOT STARTED ⏳
+Step 6 — Bronze loader                   NOT STARTED ⏳
+Step 7 — Watermark layer                 NOT STARTED ⏳
+Step 8 — CLI entry point                 NOT STARTED ⏳
+
+---------------------------------------------------------------
+PENDING BEFORE STARTING STEP 5
+---------------------------------------------------------------
+1. Clean leaked Azure access key from Git history:
+   - Open: tests/databricks_tst_notebook/New Notebook 2026-04-28 14_11_03.ipynb
+   - Replace real access key with: <your-access-key-here>
+   - Then run:
+       git add tests/databricks_tst_notebook/
+       git commit --amend --no-edit
+       git push --force origin main
+
+2. Add to .gitignore to prevent future leaks:
+   *.ipynb
+
+---------------------------------------------------------------
+STEP 5 DETAILS (what to build next)
+---------------------------------------------------------------
+Readers — one per format (CSV, JSON, Parquet)
+Location: src/bronze/readers/
+Rules:
+- Each reader uses Spark PERMISSIVE mode
+- Every source column cast to STRING
+- Returns two DataFrames: clean rows + corrupt rows
+- Corrupt rows go to bronze_corrupt (never dropped)
+- No format logic in loader.py — each reader handles its own format
+
+---------------------------------------------------------------
+DATABRICKS DETAILS
+---------------------------------------------------------------
+- Workspace: Azure Databricks (Cognizant Azure subscription)
+- Cluster: bronze-pipeline-dev (Runtime 13.3 LTS+)
+- Repo path in Databricks:
+  /Workspace/Users/kinjal.kanjilal.aiml25@heritageit.edu.in/
+  Building_a_reusable_medellion_data_architecture
+- Libraries installed on cluster:
+  pydantic>=2.0.0, pyyaml, azure-storage-file-datalake, azure-identity
+- ADLS storage account: medelliondataarcs
+  - landing container: source files land here
+  - bronze container: Bronze tables written here
+
+===============================================================
+END OF RESUME PROMPT
+===============================================================
