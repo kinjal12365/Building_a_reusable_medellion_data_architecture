@@ -5,7 +5,7 @@ jobs:
     source:
       uri: "abfss://landing@medelliondataarcs.dfs.core.windows.net/customers/"
       format: null
-      pattern: "*.csv"
+      pattern: "*"
     bronze:
       table_name: bronze_customers
       location: "abfss://bronze@medelliondataarcs.dfs.core.windows.net/customers/"
