@@ -1,4 +1,3 @@
-content = '''
 from __future__ import annotations
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql import functions as F
@@ -58,7 +57,6 @@ def _read_parquet(spark, uri):
 
 
 def _split_and_cast(spark, raw_df):
-    # Only split if _corrupt_record column exists
     if "_corrupt_record" in raw_df.columns:
         corrupt_df = raw_df.filter(F.col("_corrupt_record").isNotNull())
         clean_df = (
@@ -67,7 +65,6 @@ def _split_and_cast(spark, raw_df):
             .drop("_corrupt_record")
         )
     else:
-        # No corrupt rows at all — whole DataFrame is clean
         clean_df = raw_df
         corrupt_df = spark.createDataFrame([], schema="corrupt_record STRING")
 
@@ -82,9 +79,3 @@ def _cast_all_to_string(df):
         else:
             df = df.withColumn(field.name, F.col(field.name).cast("string"))
     return df
-'''
-
-with open('/Workspace/Users/kinjal.kanjilal.aiml25@heritageit.edu.in/Building_a_reusable_medellion_data_architecture/src/bronze/readers/adls_reader.py', 'w') as f:
-    f.write(content)
-
-print("Written!")
