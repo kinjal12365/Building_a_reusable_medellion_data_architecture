@@ -44,8 +44,9 @@ def main():
     args = parse_args()
 
     # Add src to path so bronze package is importable
-    src_path = os.path.join(os.path.dirname(__file__), '..', 'src')
-    sys.path.insert(0, os.path.abspath(src_path))
+    # Works both as CLI script and via exec() in Databricks
+    src_path = os.path.join(os.path.dirname(os.path.abspath(__file__)) if '__file__' in dir() else '/Workspace/Users/kinjal.kanjilal.aiml25@heritageit.edu.in/Building_a_reusable_medellion_data_architecture', 'src')
+    sys.path.insert(0, src_path)
 
     # Imports after path setup
     from pyspark.sql import SparkSession
