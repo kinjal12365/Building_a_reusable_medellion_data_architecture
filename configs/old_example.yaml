@@ -30,19 +30,3 @@ jobs:
     options:
       json:
         multiline: true
-
-  - job_id: medical_insurance_raw
-    dataset: medical_insurance
-    source:
-      uri: "abfss://landing@medelliondataarcs.dfs.core.windows.net/medical_insurance/"
-      format: null
-      pattern: "*.csv"
-    bronze:
-      table_name: bronze_medical_insurance
-      location: "abfss://bronze@medelliondataarcs.dfs.core.windows.net/medical_insurance/"
-    options:
-      csv:
-        header: true
-        delimiter: ","
-        encoding: "utf-8"
-        multiline: false
