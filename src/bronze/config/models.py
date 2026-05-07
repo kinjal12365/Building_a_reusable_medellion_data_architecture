@@ -117,9 +117,8 @@ class JobConfig(BaseModel):
             )
         return self
 
-
 # ---------------------------------------------------------------------------
-# Root wrapper (matches top-level 'jobs:' key in YAML)
+# Root wrapper
 # ---------------------------------------------------------------------------
 
 class PipelineConfig(BaseModel):
